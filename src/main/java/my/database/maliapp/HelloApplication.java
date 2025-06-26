@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import my.database.maliapp.roles.empleado.EmpleadoView;
 
 import java.sql.Connection;
 import java.sql.SQLException;

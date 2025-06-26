@@ -1,4 +1,4 @@
-package my.database.maliapp;
+package my.database.maliapp.modelos;
 
 public class Visitante {
     private int id;
@@ -17,7 +17,6 @@ public class Visitante {
         this.telefono = telefono;
     }
 
-    // Getters necesarios para TableView
     public int getId() { return id; }
     public String getNombre() { return nombre; }
     public String getApellido() { return apellido; }

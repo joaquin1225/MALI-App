@@ -1,31 +1,48 @@
-package my.database.maliapp;
+package my.database.maliapp.tablas;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import my.database.maliapp.TablaGenerica;
+import my.database.maliapp.modelos.Visitante;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ListaVisitantesView {
+public class ListaVisitantesView extends TablaGenerica<Visitante> {
 
-    private final Connection conn;
-
-    public ListaVisitantesView(Connection connection) {
-        this.conn = connection;
+    public ListaVisitantesView(Connection conn) {
+        super(conn);
     }
 
-    public void mostrar(Stage stage) {
-        TableView<Visitante> table = new TableView<>();
+    @Override
+    public ObservableList<Visitante> obtenerDatos() {
         ObservableList<Visitante> data = FXCollections.observableArrayList();
+        try (var stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM visitante")) {
+            while (rs.next()) {
+                data.add(new Visitante(
+                        rs.getInt("id_visitante"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("genero"),
+                        rs.getString("pais_origen"),
+                        rs.getString("telefono")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
 
-        // Columnas
+    @Override
+    public TableView<Visitante> construirTabla() {
+        TableView<Visitante> table = new TableView<>();
+
         TableColumn<Visitante, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
 
@@ -45,29 +62,6 @@ public class ListaVisitantesView {
         telefonoCol.setCellValueFactory(new PropertyValueFactory<>("telefono"));
 
         table.getColumns().addAll(idCol, nombreCol, apellidoCol, generoCol, paisCol, telefonoCol);
-
-        // Llenar tabla con datos de la BD
-        try (var stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM visitante")) {
-
-            while (rs.next()) {
-                data.add(new Visitante(
-                        rs.getInt("id_visitante"),
-                        rs.getString("nombre"),
-                        rs.getString("apellido"),
-                        rs.getString("genero"),
-                        rs.getString("pais_origen"),
-                        rs.getString("telefono")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        table.setItems(data);
-        VBox root = new VBox(table);
-        stage.setScene(new Scene(root, 700, 400));
-        stage.setTitle("Lista de visitantes");
-        stage.show();
+        return table;
     }
 }
