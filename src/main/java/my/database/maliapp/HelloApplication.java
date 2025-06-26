@@ -2,10 +2,14 @@ package my.database.maliapp;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import my.database.maliapp.roles.empleado.EmpleadoView;
 
 import java.sql.Connection;
@@ -14,13 +18,34 @@ import java.sql.SQLException;
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) {
+        Image logo = new Image(getClass().getResource("/img/mali.jpg").toExternalForm());
+        ImageView logoView = new ImageView(logo);
+        logoView.setFitWidth(120);
+        logoView.setPreserveRatio(true);
+
+        Label title = new Label("Iniciar sesión en MALI DB");
+
         Label userLabel = new Label("Usuario:");
         TextField userField = new TextField();
+
         Label passLabel = new Label("Contraseña:");
         PasswordField passField = new PasswordField();
 
         Button loginButton = new Button("Iniciar sesión");
         Label messageLabel = new Label();
+
+        GridPane form = new GridPane();
+        form.setHgap(10);
+        form.setVgap(10);
+        form.setPadding(new Insets(10));
+        form.setAlignment(Pos.CENTER);
+
+        form.add(userLabel, 0, 0);
+        form.add(userField, 1, 0);
+        form.add(passLabel, 0, 1);
+        form.add(passField, 1, 1);
+        form.add(loginButton, 1, 2);
+        form.add(messageLabel, 1, 3);
 
         loginButton.setOnAction(e -> {
             String username = userField.getText();
@@ -38,29 +63,33 @@ public class HelloApplication extends Application {
 
                     switch (currentUser) {
                         case "empleado" -> {
-                            EmpleadoView ev = new EmpleadoView(conn);
-                            ev.mostrar(new Stage());
+                            new EmpleadoView(conn).mostrar(new Stage());
                             stage.close();
                         }
-                        case "jefe_empleado" -> System.out.println("Abrir ventana de privilegios de jefe de empleado");
-                        case "admin_rrhh" -> System.out.println("Abrir ventana de privilegios de administrador de RRHH");
-                        case "admin_arte" -> System.out.println("Abrir ventana de privilegios de administrador de obras de arte");
-                        case "admin_espacios_museo" -> System.out.println("Abrir ventana de privilegios de administrador de espacios del museo");
-                        case "admin_visitas_ingresos" -> System.out.println("Abrir ventana de privilegios de administrador de visitas e ingresos");
-                        case "gestor_db" -> System.out.println("Abrir ventana de privilegios de gestor de base de datos");
-                        default -> System.out.println("Rol no encontrado");
+                        case "jefe_empleado" -> System.out.println("Abrir ventana de jefe_empleado");
+                        case "admin_rrhh" -> System.out.println("Abrir ventana de admin_rrhh");
+                        case "admin_arte" -> System.out.println("Abrir ventana de admin_arte");
+                        case "admin_espacios_museo" -> System.out.println("Abrir ventana de admin_espacios_museo");
+                        case "admin_visitas_ingresos" -> System.out.println("Abrir ventana de admin_visitas_ingresos");
+                        case "gestor_db" -> System.out.println("Abrir ventana de gestor_db");
+                        default -> System.out.println("Rol no reconocido");
                     }
                 }
             } catch (SQLException ex) {
-                messageLabel.setText("Error: " + ex.getMessage());
+                messageLabel.setText("❌ Error: " + ex.getMessage());
             }
         });
 
-        VBox root = new VBox(10, userLabel, userField, passLabel, passField, loginButton, messageLabel);
-        root.setPadding(new Insets(20));
+        VBox layout = new VBox(15, logoView, title, form);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
 
-        stage.setScene(new Scene(root, 300, 250));
-        stage.setTitle("Login - MALI DB");
+        Scene scene = new Scene(layout, 400, 350);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
+        stage.setScene(scene);
+        stage.setTitle("Login – MALI DB");
+        stage.getIcons().add(new Image(getClass().getResource("/img/mali.jpg").toExternalForm()));
         stage.show();
     }
 

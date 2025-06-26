@@ -3,6 +3,8 @@ package my.database.maliapp.roles.empleado;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import my.database.maliapp.modelos.Visitante;
@@ -39,6 +41,21 @@ public class RegistrarBoletoView {
         Button registrarBtn = new Button("Registrar boleto");
         Button finalizarBtn = new Button("Finalizar");
         Label estado = new Label();
+
+        GridPane form = new GridPane();
+        form.setHgap(10);
+        form.setVgap(10);
+        form.setPadding(new Insets(10));
+
+        form.add(new Label("Tipo de boleto:"), 0, 0);
+        form.add(tipoBoletoBox, 1, 0);
+
+        form.add(new Label("Fecha de visita:"), 0, 1);
+        form.add(fechaVisitaPicker, 1, 1);
+
+        form.add(registrarBtn, 1, 2);
+        form.add(finalizarBtn, 1, 3);
+        form.add(estado, 1, 4);
 
         registrarBtn.setOnAction(e -> {
             String tipoBoleto = tipoBoletoBox.getValue();
@@ -77,11 +94,15 @@ public class RegistrarBoletoView {
             new EmpleadoView(conn).mostrar(new Stage());
         });
 
-        VBox root = new VBox(10, title, datos, tipoBoletoBox, fechaVisitaPicker,
-                registrarBtn, finalizarBtn, estado);
+        VBox root = new VBox(10, title, datos, form);
         root.setPadding(new Insets(20));
-        stage.setScene(new Scene(root, 350, 370));
+
+        Scene scene = new Scene(root, 400, 350);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
+        stage.setScene(scene);
         stage.setTitle("Registrar boleto");
+        stage.getIcons().add(new Image(getClass().getResource("/img/mali.jpg").toExternalForm()));
         stage.show();
     }
 }

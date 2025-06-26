@@ -7,6 +7,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import my.database.maliapp.modelos.Boleto;
 import my.database.maliapp.TablaGenerica;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -59,5 +61,14 @@ public class ListaBoletosView extends TablaGenerica<Boleto> {
 
         table.getColumns().addAll(idCol, visitanteCol, tipoCol, fechaCol);
         return table;
+    }
+
+    public VBox getVista() {
+        TableView<Boleto> tabla = construirTabla();
+        tabla.setItems(obtenerDatos());
+
+        VBox layout = new VBox(tabla);
+        layout.setPadding(new Insets(10));
+        return layout;
     }
 }

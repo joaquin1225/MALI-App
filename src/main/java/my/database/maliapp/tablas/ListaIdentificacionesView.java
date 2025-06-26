@@ -7,6 +7,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import my.database.maliapp.TablaGenerica;
 import my.database.maliapp.modelos.Identificacion;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -55,5 +57,14 @@ public class ListaIdentificacionesView extends TablaGenerica<Identificacion> {
 
         table.getColumns().addAll(idIdentCol, idVisitanteCol, formaCol, numeroCol);
         return table;
+    }
+
+    public VBox getVista() {
+        TableView<Identificacion> tabla = construirTabla();
+        tabla.setItems(obtenerDatos());
+
+        VBox layout = new VBox(tabla);
+        layout.setPadding(new Insets(10));
+        return layout;
     }
 }
