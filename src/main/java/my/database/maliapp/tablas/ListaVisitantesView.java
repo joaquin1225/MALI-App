@@ -30,6 +30,7 @@ public class ListaVisitantesView extends TablaGenerica<Visitante> {
                         rs.getInt("id_visitante"),
                         rs.getString("nombre"),
                         rs.getString("apellido"),
+                        rs.getInt("id_identificacion"),
                         rs.getString("genero"),
                         rs.getString("pais_origen"),
                         rs.getString("telefono")
@@ -54,6 +55,9 @@ public class ListaVisitantesView extends TablaGenerica<Visitante> {
         TableColumn<Visitante, String> apellidoCol = new TableColumn<>("Apellido");
         apellidoCol.setCellValueFactory(new PropertyValueFactory<>("apellido"));
 
+        TableColumn<Visitante, String> idIdentCol = new TableColumn<>("ID Identificación");
+        idIdentCol.setCellValueFactory(new PropertyValueFactory<>("idIdentificacion"));
+
         TableColumn<Visitante, String> generoCol = new TableColumn<>("Género");
         generoCol.setCellValueFactory(new PropertyValueFactory<>("genero"));
 
@@ -63,7 +67,7 @@ public class ListaVisitantesView extends TablaGenerica<Visitante> {
         TableColumn<Visitante, String> telefonoCol = new TableColumn<>("Teléfono");
         telefonoCol.setCellValueFactory(new PropertyValueFactory<>("telefono"));
 
-        table.getColumns().addAll(idCol, nombreCol, apellidoCol, generoCol, paisCol, telefonoCol);
+        table.getColumns().addAll(idCol, nombreCol, apellidoCol, idIdentCol, generoCol, paisCol, telefonoCol);
         return table;
     }
 

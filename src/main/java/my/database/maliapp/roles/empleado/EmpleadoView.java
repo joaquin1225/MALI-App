@@ -56,9 +56,8 @@ public class EmpleadoView {
             }
 
             String sql = """
-                SELECT v.id_visitante, v.nombre, v.apellido, v.genero, v.pais_origen 
-                FROM visitante v 
-                JOIN identificacion i ON v.id_visitante = i.id_visitante 
+                SELECT * FROM visitante v 
+                JOIN identificacion i ON v.id_identificacion = i.id_identificacion 
                 WHERE i.forma = ? AND i.numero = ?
                 """;
 
@@ -72,9 +71,11 @@ public class EmpleadoView {
                             rs.getInt("id_visitante"),
                             rs.getString("nombre"),
                             rs.getString("apellido"),
+                            rs.getInt("id_identificacion"),
                             rs.getString("genero"),
                             rs.getString("pais_origen"),
-                            null
+                            rs.getString("telefono")
+
                     );
                     new RegistrarBoletoView(conn, visitante).mostrar(new Stage());
                     stage.close();

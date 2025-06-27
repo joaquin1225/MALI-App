@@ -28,7 +28,6 @@ public class ListaIdentificacionesView extends TablaGenerica<Identificacion> {
             while (rs.next()) {
                 data.add(new Identificacion(
                         rs.getInt("id_identificacion"),
-                        rs.getInt("id_visitante"),
                         rs.getString("forma"),
                         rs.getString("numero")
                 ));
@@ -46,16 +45,13 @@ public class ListaIdentificacionesView extends TablaGenerica<Identificacion> {
         TableColumn<Identificacion, Integer> idIdentCol = new TableColumn<>("ID Identificación");
         idIdentCol.setCellValueFactory(new PropertyValueFactory<>("idIdentificacion"));
 
-        TableColumn<Identificacion, Integer> idVisitanteCol = new TableColumn<>("ID Visitante");
-        idVisitanteCol.setCellValueFactory(new PropertyValueFactory<>("idVisitante"));
-
         TableColumn<Identificacion, String> formaCol = new TableColumn<>("Forma");
         formaCol.setCellValueFactory(new PropertyValueFactory<>("forma"));
 
         TableColumn<Identificacion, String> numeroCol = new TableColumn<>("Número");
         numeroCol.setCellValueFactory(new PropertyValueFactory<>("numero"));
 
-        table.getColumns().addAll(idIdentCol, idVisitanteCol, formaCol, numeroCol);
+        table.getColumns().addAll(idIdentCol, formaCol, numeroCol);
         return table;
     }
 

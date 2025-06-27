@@ -84,43 +84,52 @@ public class RegistrarVisitanteView {
             }
 
             try {
-                String sqlVisitante = """
-                    INSERT INTO visitante (nombre, apellido, genero, pais_origen, telefono)
-                    VALUES (?, ?, ?, ?, ?)
-                    RETURNING id_visitante
+                int idIdentificacion;
+
+                String sqlIdent = """
+                    INSERT INTO identificacion (forma, numero)
+                    VALUES (?, ?)
+                    RETURNING id_identificacion
                     """;
 
+                try (PreparedStatement stmt = conn.prepareStatement(sqlIdent)) {
+                    stmt.setString(1, forma);
+                    stmt.setString(2, numero);
+                    var rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        idIdentificacion = rs.getInt("id_identificacion");
+                    } else {
+                        status.setText("❌ No se pudo obtener ID de identificación.");
+                        return;
+                    }
+                }
+
                 int idVisitante;
+
+                String sqlVisitante = """
+                    INSERT INTO visitante (nombre, apellido, id_identificacion, genero, pais_origen, telefono)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    RETURNING id_visitante
+                    """;
 
                 try (PreparedStatement stmt = conn.prepareStatement(sqlVisitante)) {
                     stmt.setString(1, nombre);
                     stmt.setString(2, apellido);
-                    stmt.setString(3, genero);
-                    stmt.setString(4, pais);
-                    stmt.setString(5, telefono);
+                    stmt.setInt(3, idIdentificacion);
+                    stmt.setString(4, genero);
+                    stmt.setString(5, pais);
+                    stmt.setString(6, telefono);
 
                     var rs = stmt.executeQuery();
                     if (rs.next()) {
                         idVisitante = rs.getInt("id_visitante");
                     } else {
-                        status.setText("❌ No se pudo obtener ID del visitante.");
+                        status.setText("❌ No se pudo registrar visitante.");
                         return;
                     }
                 }
 
-                String sqlIdent = """
-                    INSERT INTO identificacion (id_visitante, forma, numero)
-                    VALUES (?, ?, ?)
-                    """;
-
-                try (PreparedStatement stmt = conn.prepareStatement(sqlIdent)) {
-                    stmt.setInt(1, idVisitante);
-                    stmt.setString(2, forma);
-                    stmt.setString(3, numero);
-                    stmt.executeUpdate();
-                }
-
-                Visitante visitante = new Visitante(idVisitante, nombre, apellido, genero, pais, telefono);
+                Visitante visitante = new Visitante(idVisitante, nombre, apellido, idIdentificacion, genero, pais, telefono);
                 new RegistrarBoletoView(conn, visitante).mostrar(new Stage());
                 stage.close();
 
