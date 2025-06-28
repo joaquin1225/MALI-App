@@ -2,65 +2,28 @@ package my.database.maliapp.tablas;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import my.database.maliapp.modelos.Boleto;
 import my.database.maliapp.TablaGenerica;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
-import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ListaBoletosView extends TablaGenerica<Boleto> {
 
     public ListaBoletosView(Connection conn) {
         super(conn);
-    }
-
-    @Override
-    public void mostrar(Stage stage) {
-        TableView<Boleto> tabla = construirTabla();
-        tabla.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        tabla.setItems(obtenerDatos());
-
-        Label estado = new Label();
-
-        Button eliminarBtn = new Button("Eliminar boletos seleccionados");
-        eliminarBtn.setOnAction(e -> {
-            ObservableList<Boleto> seleccionados = tabla.getSelectionModel().getSelectedItems();
-            if (seleccionados == null || seleccionados.isEmpty()) {
-                estado.setText("❗ No hay boletos seleccionados para eliminar.");
-                return;
-            }
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Confirmar Eliminación");
-            confirm.setHeaderText("¿Estás seguro de eliminar los boletos seleccionados?");
-            confirm.setContentText("Esta acción no se puede deshacer.");
-
-            confirm.showAndWait().ifPresent(respuesta -> {
-                if (respuesta == ButtonType.OK) {
-                    for (Boleto b : seleccionados) {
-                        eliminarBoleto(b.getIdBoleto());
-                    }
-                    tabla.setItems(obtenerDatos());
-                    estado.setText("✅ Boletos eliminados correctamente.");
-                }
-            });
-        });
-
-        VBox root = new VBox(10, tabla, eliminarBtn, estado);
-        root.setPadding(new Insets(15));
-        stage.setScene(new Scene(root, 600, 400));
-        stage.setTitle("Lista de boletos");
-        stage.show();
     }
 
     private void eliminarBoleto(int id) {
@@ -119,8 +82,86 @@ public class ListaBoletosView extends TablaGenerica<Boleto> {
         TableView<Boleto> tabla = construirTabla();
         tabla.setItems(obtenerDatos());
 
-        VBox layout = new VBox(tabla);
+        Map<Boleto, CheckBox> checkboxMap = new HashMap<>();
+
+        TableColumn<Boleto, Boolean> colSeleccion = new TableColumn<>("Seleccionar");
+        colSeleccion.setCellFactory(tc -> new TableCell<>() {
+            private final CheckBox checkBox = new CheckBox();
+
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    Boleto b = getTableView().getItems().get(getIndex());
+                    checkboxMap.put(b, checkBox);
+                    checkBox.setSelected(false);
+                    setGraphic(checkBox);
+                }
+            }
+        });
+
+        Label estado = new Label();
+        Button btnModoEliminar = new Button("Eliminar boletos");
+        Button btnEliminar = new Button("Eliminar");
+        Button btnCancelar = new Button("Cancelar");
+        HBox botones = new HBox(10, btnModoEliminar);
+
+        btnModoEliminar.setOnAction(e -> {
+            tabla.getColumns().add(0, colSeleccion);
+            botones.getChildren().setAll(btnEliminar, btnCancelar);
+            estado.setText("✅ Modo eliminación activado. Marca los boletos a eliminar.");
+        });
+
+        btnCancelar.setOnAction(e -> {
+            tabla.getColumns().remove(colSeleccion);
+            tabla.setItems(obtenerDatos());
+            botones.getChildren().setAll(btnModoEliminar);
+            checkboxMap.clear();
+            estado.setText("❌ Eliminación cancelada.");
+        });
+
+        btnEliminar.setOnAction(e -> {
+            ObservableList<Boleto> todos = tabla.getItems();
+            ObservableList<Boleto> seleccionados = FXCollections.observableArrayList();
+
+            for (Boleto b : todos) {
+                CheckBox cb = checkboxMap.get(b);
+                if (cb != null && cb.isSelected()) {
+                    seleccionados.add(b);
+                }
+            }
+
+            if (seleccionados.isEmpty()) {
+                estado.setText("❗ No has seleccionado boletos para eliminar.");
+                return;
+            }
+
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Confirmar eliminación");
+            confirm.setHeaderText("¿Seguro que deseas eliminar los boletos seleccionados?");
+            confirm.setContentText("Esta acción no se puede deshacer.");
+
+            confirm.showAndWait().ifPresent(respuesta -> {
+                if (respuesta == ButtonType.OK) {
+                    for (Boleto b : seleccionados) {
+                        eliminarBoleto(b.getIdBoleto());
+                    }
+
+                    tabla.getColumns().remove(colSeleccion);
+                    tabla.setItems(obtenerDatos());
+                    checkboxMap.clear();
+                    botones.getChildren().setAll(btnModoEliminar);
+                    estado.setText("✅ Se eliminaron " + seleccionados.size() + " boletos correctamente.");
+                }
+            });
+        });
+
+        VBox layout = new VBox(10, tabla, botones, estado);
         layout.setPadding(new Insets(10));
         return layout;
     }
+
+
 }

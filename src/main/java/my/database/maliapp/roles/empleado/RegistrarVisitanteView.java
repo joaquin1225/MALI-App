@@ -89,7 +89,7 @@ public class RegistrarVisitanteView {
                 String sqlIdent = """
                     INSERT INTO identificacion (forma, numero)
                     VALUES (?, ?)
-                    RETURNING id_identificacion
+                    RETURNING id_ident
                     """;
 
                 try (PreparedStatement stmt = conn.prepareStatement(sqlIdent)) {
@@ -97,7 +97,7 @@ public class RegistrarVisitanteView {
                     stmt.setString(2, numero);
                     var rs = stmt.executeQuery();
                     if (rs.next()) {
-                        idIdentificacion = rs.getInt("id_identificacion");
+                        idIdentificacion = rs.getInt("id_ident");
                     } else {
                         status.setText("❌ No se pudo obtener ID de identificación.");
                         return;
@@ -107,7 +107,7 @@ public class RegistrarVisitanteView {
                 int idVisitante;
 
                 String sqlVisitante = """
-                    INSERT INTO visitante (nombre, apellido, id_identificacion, genero, pais_origen, telefono)
+                    INSERT INTO visitante (nombre, apellido, id_ident, genero, pais_origen, telefono)
                     VALUES (?, ?, ?, ?, ?, ?)
                     RETURNING id_visitante
                     """;

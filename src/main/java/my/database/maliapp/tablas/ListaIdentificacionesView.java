@@ -27,7 +27,7 @@ public class ListaIdentificacionesView extends TablaGenerica<Identificacion> {
              ResultSet rs = stmt.executeQuery("SELECT * FROM identificacion")) {
             while (rs.next()) {
                 data.add(new Identificacion(
-                        rs.getInt("id_identificacion"),
+                        rs.getInt("id_ident"),
                         rs.getString("forma"),
                         rs.getString("numero")
                 ));

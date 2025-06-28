@@ -25,7 +25,7 @@ public class EmpleadoView {
         Label title = new Label("Ingresar identificación del visitante");
 
         ComboBox<String> formaBox = new ComboBox<>();
-        formaBox.getItems().addAll("DNI", "Pasaporte", "CE");
+        formaBox.getItems().addAll("DNI", "PASAPORTE", "CE");
         formaBox.setValue("DNI");
 
         TextField numeroField = new TextField();
@@ -57,7 +57,7 @@ public class EmpleadoView {
 
             String sql = """
                 SELECT * FROM visitante v 
-                JOIN identificacion i ON v.id_identificacion = i.id_identificacion 
+                JOIN identificacion i ON v.id_ident = i.id_ident 
                 WHERE i.forma = ? AND i.numero = ?
                 """;
 
@@ -71,7 +71,7 @@ public class EmpleadoView {
                             rs.getInt("id_visitante"),
                             rs.getString("nombre"),
                             rs.getString("apellido"),
-                            rs.getInt("id_identificacion"),
+                            rs.getInt("id_ident"),
                             rs.getString("genero"),
                             rs.getString("pais_origen"),
                             rs.getString("telefono")

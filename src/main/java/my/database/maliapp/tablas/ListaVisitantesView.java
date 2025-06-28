@@ -30,7 +30,7 @@ public class ListaVisitantesView extends TablaGenerica<Visitante> {
                         rs.getInt("id_visitante"),
                         rs.getString("nombre"),
                         rs.getString("apellido"),
-                        rs.getInt("id_identificacion"),
+                        rs.getInt("id_ident"),
                         rs.getString("genero"),
                         rs.getString("pais_origen"),
                         rs.getString("telefono")
