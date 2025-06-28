@@ -33,7 +33,7 @@
 ### 5. 🎟 Registrar boletos
 - Aparecerán los datos del visitante.
 - Selecciona:
-  - Tipo de boleto (`General`, `Estudiante`, `VIP`)
+  - Tipo de boleto
   - Fecha de visita
 - Puedes:
   - Registrar **varios boletos seguidos** para el mismo visitante.
