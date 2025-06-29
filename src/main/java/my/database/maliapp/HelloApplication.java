@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import my.database.maliapp.roles.empleado.EmpleadoView;
 import my.database.maliapp.roles.jefe_empleado.JefeEmpleadoView;
+import my.database.maliapp.roles.admin_arte.AdminArteView;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -72,7 +73,10 @@ public class HelloApplication extends Application {
                             stage.close();
                         }
                         case "admin_rrhh" -> System.out.println("Abrir ventana de admin_rrhh");
-                        case "admin_arte" -> System.out.println("Abrir ventana de admin_arte");
+                        case "admin_arte" -> {
+                            new AdminArteView(conn).mostrar(new Stage());
+                            stage.close();
+                        }
                         case "admin_espacios_museo" -> System.out.println("Abrir ventana de admin_espacios_museo");
                         case "admin_visitas_ingresos" -> System.out.println("Abrir ventana de admin_visitas_ingresos");
                         case "gestor_db" -> System.out.println("Abrir ventana de gestor_db");
