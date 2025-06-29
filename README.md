@@ -32,14 +32,14 @@
 
 ### 5. 🎟 Registrar boletos
 - Aparecerán los datos del visitante.
-
-
-## ▶️ Para ingresar como jefe_empleado
-
-Te logueas y ya esta, es bastante intuitivo.
 - Selecciona:
   - Tipo de boleto
   - Fecha de visita
 - Puedes:
   - Registrar **varios boletos seguidos** para el mismo visitante.
   - Finalizar y regresar a la pantalla inicial.
+
+
+## ▶️ Para ingresar como jefe_empleado
+
+Te logueas y ya esta, es bastante intuitivo.
