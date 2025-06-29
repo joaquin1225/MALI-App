@@ -32,6 +32,11 @@
 
 ### 5. 🎟 Registrar boletos
 - Aparecerán los datos del visitante.
+
+
+## ▶️ Para ingresar como jefe_empleado
+
+Te logueas y ya esta, es bastante intuitivo.
 - Selecciona:
   - Tipo de boleto
   - Fecha de visita
