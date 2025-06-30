@@ -14,13 +14,18 @@ import my.database.maliapp.roles.empleado.EmpleadoView;
 import my.database.maliapp.roles.jefe_empleado.JefeEmpleadoView;
 import my.database.maliapp.roles.admin_arte.AdminArteView;
 
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) {
-        Image logo = new Image(getClass().getResource("/img/mali.jpg").toExternalForm());
+        URL url = getClass().getResource("/img/mali.jpg");
+        if (url == null) {
+            throw new RuntimeException("No se encontró la imagen: /img/mali.jpg");
+        }
+        Image logo = new Image(url.toExternalForm());
         ImageView logoView = new ImageView(logo);
         logoView.setFitWidth(120);
         logoView.setPreserveRatio(true);
@@ -100,11 +105,22 @@ public class HelloApplication extends Application {
         layout.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(layout, 400, 350);
-        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        URL cssUrl = getClass().getResource("/style.css");
+        if (cssUrl != null) {
+            scene.getStylesheets().add(cssUrl.toExternalForm());
+        } else {
+            System.err.println("⚠ No se encontró style.css");
+        }
+
+        URL iconUrl = getClass().getResource("/img/mali.jpg");
+        if (iconUrl != null) {
+            stage.getIcons().add(new Image(iconUrl.toExternalForm()));
+        } else {
+            System.err.println("⚠ No se encontró el ícono /img/mali.jpg");
+        }
 
         stage.setScene(scene);
         stage.setTitle("Login – MALI DB");
-        stage.getIcons().add(new Image(getClass().getResource("/img/mali.jpg").toExternalForm()));
         stage.show();
     }
 
