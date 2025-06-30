@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import my.database.maliapp.HelloApplication;
 import my.database.maliapp.modelos.*;
+import my.database.maliapp.Filtros;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -48,9 +49,9 @@ public class AdminArteView {
         panelBusqueda.getChildren().addAll(rbObra, rbArtista, rbColeccion, contenedorFiltros);
 
         VBox filtrosObra = new VBox(5);
-        TextField tfTitulo = new TextField(); tfTitulo.setPromptText("Título");
-        TextField tfFechaMin = new TextField(); tfFechaMin.setPromptText("Fecha Min");
-        TextField tfFechaMax = new TextField(); tfFechaMax.setPromptText("Fecha Max");
+        TextField tfTitulo = new TextField(); tfTitulo.setPromptText("Título"); Filtros.bloquearTildes(tfTitulo);
+        TextField tfFechaMin = new TextField(); tfFechaMin.setPromptText("Fecha Min"); Filtros.soloNumeros(tfFechaMin, 4);
+        TextField tfFechaMax = new TextField(); tfFechaMax.setPromptText("Fecha Max"); Filtros.soloNumeros(tfFechaMax, 4);
 
         ComboBox<String> cbTipo = new ComboBox<>();
         cbTipo.setPromptText("Tipo");

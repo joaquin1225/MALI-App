@@ -8,6 +8,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import my.database.maliapp.HelloApplication;
 import my.database.maliapp.modelos.Visitante;
+import my.database.maliapp.Filtros;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,6 +30,7 @@ public class EmpleadoView {
         formaBox.setValue("DNI");
 
         TextField numeroField = new TextField();
+        Filtros.bloquearTildes(numeroField);
         numeroField.setPromptText("Número de identificación");
 
         Button buscarBtn = new Button("Buscar visitante");

@@ -10,6 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import my.database.maliapp.modelos.Empleado;
+import my.database.maliapp.Filtros;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -179,9 +180,9 @@ public class AsignarEmpleadosView {
         VBox filtroBox = new VBox(5);
         filtroBox.setPadding(new Insets(10));
         filtroBox.setAlignment(Pos.TOP_CENTER);
-        TextField tfDepartamento = new TextField();
+        TextField tfDepartamento = new TextField(); Filtros.bloquearTildes(tfDepartamento);
         tfDepartamento.setPromptText("Departamento");
-        TextField tfPuesto = new TextField();
+        TextField tfPuesto = new TextField(); Filtros.bloquearTildes(tfPuesto);
         tfPuesto.setPromptText("Puesto");
         Button btnBuscar = new Button("OK");
 
@@ -195,8 +196,6 @@ public class AsignarEmpleadosView {
 
         Button btnAsignar = new Button("Asignar seleccionados");
         btnAsignar.setOnAction(e -> asignarSeleccionados());
-
-
 
         HBox filtroYTabla = new HBox(10, tablaDisponibles, filtroBox);
 

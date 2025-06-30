@@ -29,12 +29,15 @@ public class HelloApplication extends Application {
 
         Label userLabel = new Label("Usuario:");
         TextField userField = new TextField();
+        Filtros.bloquearTildes(userField);
 
         Label passLabel = new Label("Contraseña:");
         PasswordField passField = new PasswordField();
 
         Button loginButton = new Button("Iniciar sesión");
         Label messageLabel = new Label();
+
+        passField.setOnAction(e -> loginButton.fire());
 
         GridPane form = new GridPane();
         form.setHgap(10);
@@ -72,20 +75,24 @@ public class HelloApplication extends Application {
                             new JefeEmpleadoView(conn).mostrar(new Stage());
                             stage.close();
                         }
-                        case "admin_rrhh" -> System.out.println("Abrir ventana de admin_rrhh");
                         case "admin_arte" -> {
                             new AdminArteView(conn).mostrar(new Stage());
                             stage.close();
                         }
-                        case "admin_espacios_museo" -> System.out.println("Abrir ventana de admin_espacios_museo");
-                        case "admin_visitas_ingresos" -> System.out.println("Abrir ventana de admin_visitas_ingresos");
-                        case "gestor_db" -> System.out.println("Abrir ventana de gestor_db");
                         default -> System.out.println("Rol no reconocido");
                     }
                 }
             } catch (SQLException ex) {
-                messageLabel.setText("❌ Error: " + ex.getMessage());
+                String mensaje = ex.getMessage().toLowerCase();
+                if (mensaje.contains("authentication") || mensaje.contains("password") || ex.getSQLState().equals("28P01")) {
+                    messageLabel.setText("❌ Usuario o contraseña inválidos.");
+                    passField.clear();
+                    userField.requestFocus();
+                } else {
+                    messageLabel.setText("❌ Error al conectar: " + ex.getMessage());
+                }
             }
+
         });
 
         VBox layout = new VBox(15, logoView, title, form);

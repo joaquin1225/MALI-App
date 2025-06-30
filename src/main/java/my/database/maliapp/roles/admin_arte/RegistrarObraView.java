@@ -7,6 +7,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import my.database.maliapp.modelos.*;
+import my.database.maliapp.Filtros;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,12 +37,15 @@ public class RegistrarObraView {
 
         // Campos obra
         TextField tfTitulo = new TextField();
-        tfTitulo.setPromptText("Título");
+        Filtros.bloquearTildes(tfTitulo);
+        tfTitulo.setPromptText("Titulo");
 
         TextField tfFechaMin = new TextField();
+        Filtros.soloNumeros(tfFechaMin, 4);
         tfFechaMin.setPromptText("Fecha mínima (ej. 1980)");
 
         TextField tfFechaMax = new TextField();
+        Filtros.soloNumeros(tfFechaMax, 4);
         tfFechaMax.setPromptText("Fecha máxima (ej. 1990)");
 
         ComboBox<String> cbTipo = new ComboBox<>();
@@ -242,11 +246,11 @@ public class RegistrarObraView {
         VBox vbox = new VBox(10);
         vbox.setPadding(new Insets(15));
 
-        TextField tfNombre = new TextField(); tfNombre.setPromptText("Nombre");
-        TextField tfApellido = new TextField(); tfApellido.setPromptText("Apellido");
-        TextField tfPais = new TextField(); tfPais.setPromptText("País");
-        TextField tfNacimiento = new TextField(); tfNacimiento.setPromptText("Año nacimiento");
-        TextField tfFallecimiento = new TextField(); tfFallecimiento.setPromptText("Año fallecimiento (opcional)");
+        TextField tfNombre = new TextField(); tfNombre.setPromptText("Nombre"); Filtros.bloquearTildes(tfNombre);
+        TextField tfApellido = new TextField(); tfApellido.setPromptText("Apellido"); Filtros.bloquearTildes(tfApellido);
+        TextField tfPais = new TextField(); tfPais.setPromptText("País"); Filtros.bloquearTildes(tfPais);
+        TextField tfNacimiento = new TextField(); tfNacimiento.setPromptText("Año nacimiento"); Filtros.soloNumeros(tfNacimiento, 4);
+        TextField tfFallecimiento = new TextField(); tfFallecimiento.setPromptText("Año fallecimiento (opcional)"); Filtros.soloNumeros(tfFallecimiento, 4);
 
         Button btnGuardar = new Button("Guardar");
         Button btnCancelar = new Button("Cancelar");
@@ -299,7 +303,7 @@ public class RegistrarObraView {
         VBox vbox = new VBox(10);
         vbox.setPadding(new Insets(15));
 
-        TextField tfNombre = new TextField(); tfNombre.setPromptText("Nombre de la colección");
+        TextField tfNombre = new TextField(); Filtros.bloquearTildes(tfNombre); tfNombre.setPromptText("Nombre de la colección");
 
         Button btnGuardar = new Button("Guardar");
         Button btnCancelar = new Button("Cancelar");

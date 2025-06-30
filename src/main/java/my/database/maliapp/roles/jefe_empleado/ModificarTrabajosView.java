@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import my.database.maliapp.Filtros;
 import my.database.maliapp.modelos.*;
 import my.database.maliapp.tablas.ListaTrabajosView;
 
@@ -116,7 +117,7 @@ public class ModificarTrabajosView extends ListaTrabajosView {
         stage.setTitle("Agregar trabajo");
 
         Label lblDesc = new Label("Descripción:");
-        TextField tfDesc = new TextField();
+        TextField tfDesc = new TextField(); Filtros.bloquearTildes(tfDesc);
         Label lblInicio = new Label("Fecha inicio:");
         DatePicker dpInicio = new DatePicker();
         Label lblFin = new Label("Fecha fin:");
@@ -259,6 +260,7 @@ public class ModificarTrabajosView extends ListaTrabajosView {
 
         Label lblDesc = new Label("Descripción:");
         TextField tfDesc = new TextField(trabajo.getDescripcion());
+        Filtros.bloquearTildes(tfDesc);
 
         Label lblInicio = new Label("Fecha inicio:");
         DatePicker dpInicio = new DatePicker(trabajo.getFechaInicio());

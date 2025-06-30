@@ -8,6 +8,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import my.database.maliapp.modelos.Visitante;
+import my.database.maliapp.Filtros;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,13 +28,13 @@ public class RegistrarVisitanteView {
     public void mostrar(Stage stage) {
         Label title = new Label("Registrar nuevo visitante");
 
-        TextField nombreField = new TextField();
-        TextField apellidoField = new TextField();
+        TextField nombreField = new TextField(); Filtros.bloquearTildes(nombreField);
+        TextField apellidoField = new TextField(); Filtros.bloquearTildes(apellidoField);
         ComboBox<String> generoBox = new ComboBox<>();
         generoBox.getItems().addAll("-", "M", "F", "O");
         generoBox.setValue("-");
-        TextField paisField = new TextField();
-        TextField telefonoField = new TextField();
+        TextField paisField = new TextField(); Filtros.bloquearTildes(paisField);
+        TextField telefonoField = new TextField(); Filtros.soloNumeros(telefonoField, 9);
 
         Button registrarBtn = new Button("Registrar visitante");
         Label status = new Label();
