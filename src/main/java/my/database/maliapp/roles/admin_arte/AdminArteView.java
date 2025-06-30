@@ -51,21 +51,52 @@ public class AdminArteView {
         TextField tfTitulo = new TextField(); tfTitulo.setPromptText("Título");
         TextField tfFechaMin = new TextField(); tfFechaMin.setPromptText("Fecha Min");
         TextField tfFechaMax = new TextField(); tfFechaMax.setPromptText("Fecha Max");
-        ComboBox<String> cbTipo = new ComboBox<>(); cbTipo.setPromptText("Tipo");
-        ComboBox<String> cbEstado = new ComboBox<>(); cbEstado.setPromptText("Estado");
-        cbTipo.setItems(obtenerOpcionesUnicas("tipo"));
-        cbEstado.setItems(obtenerOpcionesUnicas("estado"));
+
+        ComboBox<String> cbTipo = new ComboBox<>();
+        cbTipo.setPromptText("Tipo");
+        ObservableList<String> tipos = obtenerOpcionesUnicas("tipo");
+        tipos.add(0, "Seleccionar tipo");
+        cbTipo.setItems(tipos);
+        cbTipo.getSelectionModel().selectFirst();
+        cbTipo.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "Tipo" : item);
+            }
+        });
+
+        ComboBox<String> cbEstado = new ComboBox<>();
+        cbEstado.setPromptText("Estado");
+        ObservableList<String> estados = obtenerOpcionesUnicas("estado");
+        estados.add(0, "Seleccionar estado");
+        cbEstado.setItems(estados);
+        cbEstado.getSelectionModel().selectFirst();
+        cbEstado.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "Estado" : item);
+            }
+        });
+
         filtrosObra.getChildren().addAll(tfTitulo, tfFechaMin, tfFechaMax, cbTipo, cbEstado);
 
         VBox filtrosArtista = new VBox(5);
-        TextField tfNombre = new TextField(); tfNombre.setPromptText("Nombre");
-        TextField tfApellido = new TextField(); tfApellido.setPromptText("Apellido");
-        TextField tfPais = new TextField(); tfPais.setPromptText("País");
-        filtrosArtista.getChildren().addAll(tfNombre, tfApellido, tfPais);
+        ComboBox<String> cbNombreCompleto = new ComboBox<>();
+        ComboBox<String> cbPais = new ComboBox<>();
+        cbNombreCompleto.setPromptText("Nombre completo");
+        cbPais.setPromptText("País");
+        cargarNombresArtistas(cbNombreCompleto);
+        cargarPaises(cbPais);
+
+        filtrosArtista.getChildren().addAll(cbNombreCompleto, cbPais);
 
         VBox filtrosColeccion = new VBox(5);
-        TextField tfNombreColeccion = new TextField(); tfNombreColeccion.setPromptText("Nombre colección");
-        filtrosColeccion.getChildren().add(tfNombreColeccion);
+        ComboBox<String> cbNombreColeccion = new ComboBox<>();
+        cbNombreColeccion.setPromptText("Colección");
+        cargarNombresColecciones(cbNombreColeccion);
+        filtrosColeccion.getChildren().add(cbNombreColeccion);
 
         grupoBusqueda.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
             contenedorFiltros.getChildren().clear();
@@ -82,13 +113,18 @@ public class AdminArteView {
         Button btnLimpiar = new Button("Limpiar filtros");
         Button btnCerrarSesion = new Button("Cerrar sesión");
 
-        btnBuscar.setOnAction(e -> buscar(rbObra, rbArtista, rbColeccion, tfTitulo, tfFechaMin, tfFechaMax, cbTipo, cbEstado, tfNombre, tfApellido, tfPais, tfNombreColeccion));
+        btnBuscar.setOnAction(e -> buscar(rbObra, rbArtista, rbColeccion, tfTitulo, tfFechaMin, tfFechaMax, cbTipo, cbEstado, cbNombreCompleto, cbPais, cbNombreColeccion));
 
         btnLimpiar.setOnAction(e -> {
             grupoBusqueda.selectToggle(null);
             contenedorFiltros.getChildren().clear();
             tfTitulo.clear(); tfFechaMin.clear(); tfFechaMax.clear();
-            cbTipo.getSelectionModel().clearSelection();
+
+            cbTipo.getItems().clear();
+            cbTipo.getItems().add("Seleccionar tipo");
+            cbTipo.getItems().addAll(obtenerOpcionesUnicas("tipo"));
+            cbTipo.getSelectionModel().selectFirst();
+            cbTipo.getSelectionModel().selectFirst();
             cbTipo.setButtonCell(new ListCell<>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
@@ -96,7 +132,11 @@ public class AdminArteView {
                     setText(empty || item == null ? "Tipo" : item);
                 }
             });
-            cbEstado.getSelectionModel().clearSelection();
+
+            cbEstado.getItems().clear();
+            cbEstado.getItems().add("Seleccionar estado");
+            cbEstado.getItems().addAll(obtenerOpcionesUnicas("estado"));
+            cbEstado.getSelectionModel().selectFirst();
             cbEstado.setButtonCell(new ListCell<>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
@@ -104,10 +144,40 @@ public class AdminArteView {
                     setText(empty || item == null ? "Estado" : item);
                 }
             });
-            tfNombre.clear(); tfApellido.clear(); tfPais.clear();
-            tfNombreColeccion.clear();
+
+            cargarNombresArtistas(cbNombreCompleto);
+            cbNombreCompleto.getSelectionModel().selectFirst();
+            cbNombreCompleto.setButtonCell(new ListCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? "Nombre completo" : item);
+                }
+            });
+
+            cargarPaises(cbPais);
+            cbPais.getSelectionModel().selectFirst();
+            cbPais.setButtonCell(new ListCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? "País" : item);
+                }
+            });
+
+            cargarNombresColecciones(cbNombreColeccion);
+            cbNombreColeccion.getSelectionModel().selectFirst();
+            cbNombreColeccion.setButtonCell(new ListCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? "Colección" : item);
+                }
+            });
+
             cargarObras();
         });
+
 
         btnCerrarSesion.setOnAction(e -> {
             stage.close();
@@ -124,6 +194,34 @@ public class AdminArteView {
 
         btnAgregarObra.setOnAction(e -> {
             new RegistrarObraView(conn, this::cargarObras).mostrar(stage);
+        });
+
+        btnActualizarObra.setOnAction(e -> {
+            ObraExtendida seleccionada = tablaObras.getSelectionModel().getSelectedItem();
+            if (seleccionada != null) {
+                mostrarFormularioEditarObra(seleccionada);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "❗ Selecciona una obra para editar.");
+                alert.showAndWait();
+            }
+        });
+
+        btnEliminarObra.setOnAction(e -> {
+            ObraExtendida seleccionada = tablaObras.getSelectionModel().getSelectedItem();
+            if (seleccionada != null) {
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "¿Deseas eliminar esta obra?", ButtonType.OK, ButtonType.CANCEL);
+                confirm.showAndWait().ifPresent(r -> {
+                    if (r == ButtonType.OK) {
+                        eliminarObra(seleccionada.getObra().getIdObra());
+                        cargarObras();
+                        Alert info = new Alert(Alert.AlertType.INFORMATION, "✅ Obra eliminada correctamente.");
+                        info.showAndWait();
+                    }
+                });
+            } else {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "❗ Selecciona una obra para eliminar.");
+                alert.showAndWait();
+            }
         });
 
         HBox botonesAcciones = new HBox(10, btnAgregarObra, btnEliminarObra, btnActualizarObra);
@@ -228,8 +326,8 @@ public class AdminArteView {
     private void buscar(RadioButton rbObra, RadioButton rbArtista, RadioButton rbColeccion,
                         TextField tfTitulo, TextField tfFechaMin, TextField tfFechaMax,
                         ComboBox<String> cbTipo, ComboBox<String> cbEstado,
-                        TextField tfNombre, TextField tfApellido, TextField tfPais,
-                        TextField tfNombreColeccion) {
+                        ComboBox<String> cbNombreCompleto, ComboBox<String> cbPais,
+                        ComboBox<String> cbNombreColeccion) {
 
         obras.clear();
         StringBuilder sql = new StringBuilder("""
@@ -258,31 +356,35 @@ public class AdminArteView {
                 sql.append(" AND o.fecha_max <= ?");
                 parametros.add(Integer.parseInt(tfFechaMax.getText()));
             }
-            if (cbTipo.getValue() != null) {
+            if (cbTipo.getValue() != null && !cbTipo.getValue().equals("Seleccionar tipo")) {
                 sql.append(" AND o.tipo = ?");
                 parametros.add(cbTipo.getValue());
             }
-            if (cbEstado.getValue() != null) {
+            if (cbEstado.getValue() != null && !cbEstado.getValue().equals("Seleccionar estado")) {
                 sql.append(" AND o.estado = ?");
                 parametros.add(cbEstado.getValue());
             }
+
         } else if (rbArtista.isSelected()) {
-            if (!tfNombre.getText().isEmpty()) {
-                sql.append(" AND a.nombre ILIKE ?");
-                parametros.add("%" + tfNombre.getText() + "%");
+            if (cbNombreCompleto.getValue() != null && !cbNombreCompleto.getValue().equals("Seleccionar nombre")) {
+                String[] partes = cbNombreCompleto.getValue().split(" ", 2);
+                if (partes.length > 0) {
+                    sql.append(" AND a.nombre ILIKE ?");
+                    parametros.add("%" + partes[0] + "%");
+                }
+                if (partes.length > 1) {
+                    sql.append(" AND a.apellido ILIKE ?");
+                    parametros.add("%" + partes[1] + "%");
+                }
             }
-            if (!tfApellido.getText().isEmpty()) {
-                sql.append(" AND a.apellido ILIKE ?");
-                parametros.add("%" + tfApellido.getText() + "%");
-            }
-            if (!tfPais.getText().isEmpty()) {
+            if (cbPais.getValue() != null && !cbPais.getValue().equals("Seleccionar pais")) {
                 sql.append(" AND a.pais ILIKE ?");
-                parametros.add("%" + tfPais.getText() + "%");
+                parametros.add("%" + cbPais.getValue() + "%");
             }
         } else if (rbColeccion.isSelected()) {
-            if (!tfNombreColeccion.getText().isEmpty()) {
+            if (cbNombreColeccion.getValue() != null && !cbNombreColeccion.getValue().equals("Seleccionar coleccion")) {
                 sql.append(" AND c.nombre_coleccion ILIKE ?");
-                parametros.add("%" + tfNombreColeccion.getText() + "%");
+                parametros.add("%" + cbNombreColeccion.getValue() + "%");
             }
         }
 
@@ -339,4 +441,64 @@ public class AdminArteView {
         return opciones;
     }
 
+    private void cargarNombresArtistas(ComboBox<String> comboBox) {
+        comboBox.getItems().clear();
+        comboBox.getItems().add("Seleccionar nombre");
+        try (PreparedStatement ps = conn.prepareStatement("""
+        SELECT DISTINCT nombre, apellido FROM artista ORDER BY nombre, apellido
+    """); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String nombre = rs.getString("nombre");
+                String apellido = rs.getString("apellido");
+                comboBox.getItems().add(nombre + (apellido != null ? " " + apellido : ""));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        comboBox.getSelectionModel().selectFirst();
+    }
+
+    private void cargarPaises(ComboBox<String> comboBox) {
+        comboBox.getItems().clear();
+        comboBox.getItems().add("Seleccionar pais");
+        try (PreparedStatement ps = conn.prepareStatement("""
+        SELECT DISTINCT pais FROM artista WHERE pais IS NOT NULL ORDER BY pais
+    """); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                comboBox.getItems().add(rs.getString("pais"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        comboBox.getSelectionModel().selectFirst();
+    }
+
+    private void cargarNombresColecciones(ComboBox<String> comboBox) {
+        comboBox.getItems().clear();
+        comboBox.getItems().add("Seleccionar coleccion");
+        try (PreparedStatement ps = conn.prepareStatement("""
+        SELECT DISTINCT nombre_coleccion FROM coleccion ORDER BY nombre_coleccion
+    """); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                comboBox.getItems().add(rs.getString("nombre_coleccion"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        comboBox.getSelectionModel().selectFirst();
+    }
+
+    private void eliminarObra(int idObra) {
+        try (PreparedStatement ps1 = conn.prepareStatement("DELETE FROM pertenece_a WHERE id_obra = ?");
+             PreparedStatement ps2 = conn.prepareStatement("DELETE FROM obra_de_arte WHERE id_obra = ?")) {
+            ps1.setInt(1, idObra);
+            ps1.executeUpdate();
+
+            ps2.setInt(1, idObra);
+            ps2.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo eliminar la obra.");
+        }
+    }
 }
