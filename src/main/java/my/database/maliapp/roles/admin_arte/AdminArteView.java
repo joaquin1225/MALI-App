@@ -199,7 +199,7 @@ public class AdminArteView {
         btnActualizarObra.setOnAction(e -> {
             ObraExtendida seleccionada = tablaObras.getSelectionModel().getSelectedItem();
             if (seleccionada != null) {
-                mostrarFormularioEditarObra(seleccionada);
+                new RegistrarObraView(conn, this::cargarObras).mostrar(stage, seleccionada);
             } else {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "❗ Selecciona una obra para editar.");
                 alert.showAndWait();
@@ -500,5 +500,13 @@ public class AdminArteView {
             e.printStackTrace();
             mostrarAlerta("Error", "No se pudo eliminar la obra.");
         }
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }

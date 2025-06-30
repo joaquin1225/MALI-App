@@ -22,18 +22,27 @@ public class RegistrarObraView {
     }
 
     public void mostrar(Stage owner) {
+        mostrar(owner, null); // modo creación por defecto
+    }
+
+    public void mostrar(Stage owner, ObraExtendida obra) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(owner);
-        stage.setTitle("Registrar nueva obra");
+        stage.setTitle(obra == null ? "Registrar nueva obra" : "Editar obra");
 
         VBox root = new VBox(10);
         root.setPadding(new Insets(15));
 
         // Campos obra
-        TextField tfTitulo = new TextField(); tfTitulo.setPromptText("Título");
-        TextField tfFechaMin = new TextField(); tfFechaMin.setPromptText("Fecha mínima (ej. 1980)");
-        TextField tfFechaMax = new TextField(); tfFechaMax.setPromptText("Fecha máxima (ej. 1990)");
+        TextField tfTitulo = new TextField();
+        tfTitulo.setPromptText("Título");
+
+        TextField tfFechaMin = new TextField();
+        tfFechaMin.setPromptText("Fecha mínima (ej. 1980)");
+
+        TextField tfFechaMax = new TextField();
+        tfFechaMax.setPromptText("Fecha máxima (ej. 1990)");
 
         ComboBox<String> cbTipo = new ComboBox<>();
         cbTipo.setPromptText("Tipo");
@@ -45,30 +54,42 @@ public class RegistrarObraView {
         cbEstado.setEditable(true);
         cargarValoresUnicos("estado", cbEstado);
 
-
-        // Campos artista
+        // Artista
         Label lblArtista = new Label("Artista:");
         ComboBox<Artista> cbArtistas = new ComboBox<>();
         cbArtistas.setPromptText("Seleccionar artista");
         cargarArtistas(cbArtistas);
 
         Button btnNuevoArtista = new Button("Añadir artista");
-        btnNuevoArtista.setOnAction(event -> {
-            mostrarVentanaNuevoArtista(cbArtistas);
-        });
+        btnNuevoArtista.setOnAction(event -> mostrarVentanaNuevoArtista(cbArtistas));
 
-        // Colección (opcional)
+        // Colección
         ComboBox<Coleccion> cbColeccion = new ComboBox<>();
         Button btnNuevaColeccion = new Button("Añadir colección");
-        btnNuevaColeccion.setOnAction(e -> {
-            mostrarVentanaNuevaColeccion(cbColeccion);
-        });
+        btnNuevaColeccion.setOnAction(e -> mostrarVentanaNuevaColeccion(cbColeccion));
         cbColeccion.setPromptText("Colección (opcional)");
         cargarColecciones(cbColeccion);
 
-        Button btnGuardar = new Button("Guardar");
+        // Si se está editando, precargar los campos
+        Integer idObra = null;
+        if (obra != null) {
+            idObra = obra.getObra().getIdObra();
+            tfTitulo.setText(obra.getTitulo());
+            tfFechaMin.setText(String.valueOf(obra.getFechaMin()));
+            tfFechaMax.setText(String.valueOf(obra.getFechaMax()));
+            cbTipo.setValue(obra.getTipo());
+            cbEstado.setValue(obra.getEstado());
+            cbArtistas.getSelectionModel().select(obra.getArtista());
+            if (obra.getColeccion() != null) {
+                cbColeccion.getSelectionModel().select(obra.getColeccion());
+            }
+        }
+
+        // Botones
+        Button btnGuardar = new Button(obra == null ? "Guardar" : "Actualizar");
         Button btnCancelar = new Button("Cancelar");
 
+        Integer finalIdObra = idObra;
         btnGuardar.setOnAction(e -> {
             try {
                 String titulo = tfTitulo.getText();
@@ -93,31 +114,54 @@ public class RegistrarObraView {
                 }
                 int idArtista = artistaSeleccionado.getIdArtista();
 
-                // Insertar obra
-                int idObra;
-                try (PreparedStatement ps = conn.prepareStatement("""
+                // Insertar o actualizar obra
+                int idObraEditada;
+                if (finalIdObra == null) {
+                    try (PreparedStatement ps = conn.prepareStatement("""
                     INSERT INTO obra_de_arte(id_artista, titulo, fecha_min, fecha_max, tipo, estado)
                     VALUES (?, ?, ?, ?, ?, ?) RETURNING id_obra
                 """)) {
-                    ps.setInt(1, idArtista);
-                    ps.setString(2, titulo);
-                    ps.setInt(3, fechaMin);
-                    ps.setInt(4, fechaMax);
-                    ps.setString(5, tipo);
-                    ps.setString(6, estado);
-                    ResultSet rs = ps.executeQuery();
-                    rs.next();
-                    idObra = rs.getInt(1);
+                        ps.setInt(1, idArtista);
+                        ps.setString(2, titulo);
+                        ps.setInt(3, fechaMin);
+                        ps.setInt(4, fechaMax);
+                        ps.setString(5, tipo);
+                        ps.setString(6, estado);
+                        ResultSet rs = ps.executeQuery();
+                        rs.next();
+                        idObraEditada = rs.getInt(1);
+                    }
+                } else {
+                    try (PreparedStatement ps = conn.prepareStatement("""
+                    UPDATE obra_de_arte
+                    SET id_artista = ?, titulo = ?, fecha_min = ?, fecha_max = ?, tipo = ?, estado = ?
+                    WHERE id_obra = ?
+                """)) {
+                        ps.setInt(1, idArtista);
+                        ps.setString(2, titulo);
+                        ps.setInt(3, fechaMin);
+                        ps.setInt(4, fechaMax);
+                        ps.setString(5, tipo);
+                        ps.setString(6, estado);
+                        ps.setInt(7, finalIdObra);
+                        ps.executeUpdate();
+                    }
+                    idObraEditada = finalIdObra;
                 }
 
-                // Insertar relación con colección si se eligió
+                // Insertar/Actualizar colección
                 Coleccion seleccionada = cbColeccion.getValue();
+                try (PreparedStatement ps = conn.prepareStatement("""
+                DELETE FROM pertenece_a WHERE id_obra = ?
+            """)) {
+                    ps.setInt(1, idObraEditada);
+                    ps.executeUpdate();
+                }
                 if (seleccionada != null) {
                     try (PreparedStatement ps = conn.prepareStatement("""
-                        INSERT INTO pertenece_a(id_obra, id_coleccion)
-                        VALUES (?, ?)
-                    """)) {
-                        ps.setInt(1, idObra);
+                    INSERT INTO pertenece_a(id_obra, id_coleccion) VALUES (?, ?)
+                """)) {
+                        ps.setInt(1, idObraEditada);
                         ps.setInt(2, seleccionada.getIdColeccion());
                         ps.executeUpdate();
                     }

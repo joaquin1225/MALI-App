@@ -27,4 +27,17 @@ public class Coleccion {
     public String toString() {
         return nombreColeccion;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Coleccion)) return false;
+        Coleccion c = (Coleccion) o;
+        return idColeccion == c.idColeccion;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(idColeccion);
+    }
 }

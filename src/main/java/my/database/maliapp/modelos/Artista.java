@@ -59,4 +59,17 @@ public class Artista {
     public String toString() {
         return nombre + (apellido != null ? " " + apellido : "");
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Artista)) return false;
+        Artista a = (Artista) o;
+        return idArtista == a.idArtista;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(idArtista);
+    }
 }
