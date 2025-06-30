@@ -27,3 +27,7 @@
 .button:hover {
     -fx-background-color: #34495e;
 }
+
+.combo-box .text {
+    -fx-fill: #666;
+}
