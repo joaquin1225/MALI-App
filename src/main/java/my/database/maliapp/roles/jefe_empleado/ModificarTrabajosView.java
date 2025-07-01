@@ -316,7 +316,7 @@ public class ModificarTrabajosView extends ListaTrabajosView {
     }
 
     private boolean yaExisteTrabajoObra(int idTrabajo, int idObra) {
-        String sql = "SELECT 1 FROM trabajo_obra WHERE id_trabajo = ? AND id_obra = ?";
+        String sql = "SELECT 1 FROM trabajoobra WHERE id_trabajo = ? AND id_obra = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idTrabajo);
             stmt.setInt(2, idObra);
@@ -329,7 +329,7 @@ public class ModificarTrabajosView extends ListaTrabajosView {
     }
 
     private boolean yaExisteTrabajoSala(int idTrabajo, int idSala) {
-        String sql = "SELECT 1 FROM trabajo_sala WHERE id_trabajo = ? AND id_sala = ?";
+        String sql = "SELECT 1 FROM trabajosala WHERE id_trabajo = ? AND id_sala = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idTrabajo);
             stmt.setInt(2, idSala);
