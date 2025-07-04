@@ -8,7 +8,7 @@ Cada rol tiene una interfaz y funcionalidades específicas dentro de la aplicaci
 ## ▶️ Para ingresar como **empleado**
 
 ### 1. 🔐 Inicia sesión
-- Ingresa tu nombre de usuario y contraseña asignados al rol `empleado` en PostgreSQL.
+- Ingresa tu nombre de usuario y contraseña asignados al rol `empleado` en PostgreSQL. (Contraseña: empleado)
 - Presiona el botón **"Iniciar sesión"**.
 
 ### 2. 🏠 Pantalla principal
@@ -51,15 +51,12 @@ Se abrirá una ventana donde puedes:
 ## 🧑‍💼 Para ingresar como **jefe de empleados**
 
 ### 1. 🔐 Inicia sesión
-- Ingresa tu nombre de usuario y contraseña asignados al rol `jefe_empleado` en PostgreSQL.
+- Ingresa tu nombre de usuario y contraseña asignados al rol `jefe_empleado` en PostgreSQL. (Contraseña: jefeempleado)
 - Presiona el botón **"Iniciar sesión"**.
 
 ### 2. 🏠 Pantalla principal
 Podrás acceder a las siguientes funciones:
 - Visualizar la información de los **trabajos registrados**.
-- Consultar las tablas de:
-  - `sala`
-  - `obra_de_arte`
 - Iniciar el flujo para agregar nuevos trabajos a:
   - Obras de arte
   - Salas
@@ -74,16 +71,23 @@ Podrás acceder a las siguientes funciones:
   - Salas
 - Selecciona múltiples elementos desde listas y confirma la asignación.
 
+### 4. 🛠 Asignar empleados a trabajos
+- Se abre una ventana con todos los trabajos y una opcion para agregar empleados.
+- Se abre otra ventana con una tabla con los empleados que ya han sido asignados.
+- Debajo de la tabla se visualiza una lista de empleados a los cuales se les puede filtrar por `departamento` o `puesto`.
+- Se selecciona uno o varios empleados asignados.
+- Se actualizan las tablas de la ventana con los empleados.
+
 ---
 
-## 🧑‍💻 Para ingresar como **administrador**
+## 🧑‍💻 Para ingresar como **administrador de obras de arte**
 
 ### 1. 🔐 Inicia sesión
-- Ingresa tu nombre de usuario y contraseña asignados al rol `administrador` en PostgreSQL.
+- Ingresa tu nombre de usuario y contraseña asignados al rol `admin_arte` en PostgreSQL. (Contraseña: adminarte)
 - Presiona el botón **"Iniciar sesión"**.
 
 ### 2. 🏠 Pantalla principal
-Accederás a una interfaz que permite administrar los datos del arte.
+Accederás a una interfaz que muestra todas las obras de arte asi como diferentes funciones bastante intuitivas.
 
 Funciones disponibles:
 - Buscar obras de arte por diferentes criterios.
